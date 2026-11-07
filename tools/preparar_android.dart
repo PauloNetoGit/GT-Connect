@@ -28,6 +28,9 @@ void main(List<String> args) {
   final i = text.indexOf(marker);
   if (i >= 0) text = text.substring(0, i).trimRight();
 
+  if (file == kts && !text.contains('import java.util.Properties')) {
+    text = 'import java.util.Properties\n\n$text';
+  }
   final block = file == kts ? _ktsBlock(appId) : _groovyBlock(appId);
   file.writeAsStringSync('$text\n\n$block\n');
   stdout.writeln('OK: ${file.path} configurado (applicationId = $appId).');
@@ -42,7 +45,7 @@ android {
         minSdk = maxOf(24, flutter.minSdkVersion)
     }
     if (ponteKeyFile.exists()) {
-        val p = java.util.Properties()
+        val p = Properties()
         ponteKeyFile.inputStream().use { p.load(it) }
         signingConfigs {
             create("upload") {
