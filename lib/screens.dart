@@ -123,7 +123,7 @@ class _HomeShellState extends State<HomeShell> {
         showAboutDialog(
           context: context,
           applicationName: 'Pedal Ponte',
-          applicationVersion: '1.1.1',
+          applicationVersion: '1.1.2',
           applicationIcon: const AppMark(size: 44),
           children: const [
             Text('Liga pedais MIDI (como o M-Vave Chocolate Plus) à BOSS GT-1, usando o celular como ponte.\n\n'
@@ -746,10 +746,15 @@ class _RowEditorState extends State<RowEditor> {
       builder: (context, _) {
         if (!valid) return const SizedBox.shrink();
         final learning = s.learningRow == widget.index;
+        final mq = MediaQuery.of(context);
+        // Espaço para o teclado e para a barra de navegação do Android (tela de borda a borda).
+        final bottomSpace = mq.viewInsets.bottom + mq.padding.bottom;
         return Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+          padding: EdgeInsets.only(bottom: bottomSpace),
+          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+           Flexible(
+            child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
             child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
               // ---- cabeçalho
               Row(children: [
@@ -822,10 +827,19 @@ class _RowEditorState extends State<RowEditor> {
               ]),
               const SizedBox(height: 16),
               _actionSettings(context),
+              const SizedBox(height: 8),
+            ]),
+            ),
+           ),
 
-              // ---- rodapé
-              const SizedBox(height: 22),
-              Row(children: [
+           // ---- rodapé fixo
+           Container(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+            decoration: const BoxDecoration(
+              color: AppColors.surface,
+              border: Border(top: BorderSide(color: AppColors.line)),
+            ),
+            child: Row(children: [
                 Expanded(
                   child: OutlinedButton.icon(
                     icon: const Icon(Icons.play_arrow_rounded),
@@ -838,8 +852,8 @@ class _RowEditorState extends State<RowEditor> {
                   child: FilledButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Concluir')),
                 ),
               ]),
-            ]),
-          ),
+           ),
+          ]),
         );
       },
     );
@@ -1269,7 +1283,7 @@ class _PedalSheetState extends State<PedalSheet> {
       builder: (context, _) {
         final ble = widget.state.bleFound;
         return Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+          padding: EdgeInsets.fromLTRB(20, 8, 20, 16 + MediaQuery.of(context).padding.bottom),
           child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             Row(children: [
               const Expanded(child: Text('Conectar pedal', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700))),
