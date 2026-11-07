@@ -3,6 +3,9 @@ library;
 
 const int patchCount = 198; // 0–98 = U01–U99, 99–197 = P01–P99
 
+/// Converte um número vindo do JSON (int ou double) para int.
+int _asInt(Object? v) => v is int ? v : (v is double ? v.toInt() : 0);
+
 String pad2(int n) => n.toString().padLeft(2, '0');
 
 String patchLabel(int? n) {
@@ -76,7 +79,7 @@ class Trigger {
 
   static Trigger? fromJson(dynamic j) {
     if (j is! Map) return null;
-    return Trigger('${j['type']}', (j['ch'] as num).toInt(), (j['num'] as num).toInt());
+    return Trigger('${j['type']}', _asInt(j['ch']), _asInt(j['num']));
   }
 }
 
