@@ -21,7 +21,8 @@ class LogLine {
 class BleItem {
   final String address;
   final String name;
-  BleItem(this.address, this.name);
+  final String detail;
+  BleItem(this.address, this.name, this.detail);
 }
 
 class AppState extends ChangeNotifier {
@@ -128,7 +129,7 @@ class AppState extends ChangeNotifier {
       case 'ble':
         final addr = '${e['address']}';
         if (!bleFound.any((b) => b.address == addr)) {
-          bleFound.add(BleItem(addr, '${e['name']}'));
+          bleFound.add(BleItem(addr, '${e['name']}', '${e['detail'] ?? addr}'));
           notifyListeners();
         }
         break;

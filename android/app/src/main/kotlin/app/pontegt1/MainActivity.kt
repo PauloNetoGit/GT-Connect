@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
+import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
@@ -383,7 +384,8 @@ class MainActivity : FlutterActivity() {
             if (!isMidi && !PEDAL_NAME.containsMatchIn(name)) return
             if (seenBle.containsKey(address)) return
             seenBle[address] = d
-            emit(mapOf("type" to "ble", "address" to address, "name" to name.ifEmpty { "Pedal Bluetooth MIDI" }))
+            emit(mapOf("type" to "ble", "address" to address, "name" to name.ifEmpty { "Pedal Bluetooth MIDI" },
+                "detail" to "Encontrado agora · $address"))
         }
 
         override fun onScanFailed(errorCode: Int) {
@@ -394,13 +396,36 @@ class MainActivity : FlutterActivity() {
 
     private fun bleScanStart(): String? {
         val bm = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
-        val ad = bm?.adapter ?: return "Este aparelho não tem Bluetooth"
+        if (bm == null) return "Este aparelho não tem Bluetooth"
+        val ad = bm.adapter ?: return "Este aparelho não tem Bluetooth"
         if (!ad.isEnabled) return "Ligue o Bluetooth do celular"
         val sc = ad.bluetoothLeScanner ?: return "Bluetooth LE indisponível"
         bleScanStop()
         seenBle.clear()
         scanner = sc
         val settings = ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build()
+        // Pedais já conectados ou pareados com o celular não se anunciam: listar esses primeiro.
+        val known = LinkedHashMap<String, Pair<BluetoothDevice, String>>()
+        try {
+            for (d in bm.getConnectedDevices(BluetoothProfile.GATT)) {
+                if (d.address != null) known[d.address] = d to "Conectado ao celular"
+            }
+        } catch (_: Exception) {}
+        try {
+            for (d in ad.bondedDevices ?: emptySet()) {
+                val name = d.name ?: ""
+                val le = d.type == BluetoothDevice.DEVICE_TYPE_LE
+                if ((le || PEDAL_NAME.containsMatchIn(name)) && d.address != null && !known.containsKey(d.address)) {
+                    known[d.address] = d to "Pareado no celular"
+                }
+            }
+        } catch (_: Exception) {}
+        for ((address, pair) in known) {
+            val (d, detail) = pair
+            seenBle[address] = d
+            emit(mapOf("type" to "ble", "address" to address, "name" to (d.name ?: "Pedal Bluetooth"), "detail" to detail))
+        }
+
         sc.startScan(null, settings, scanCallback)
         scanning = true
         main.postDelayed({ bleScanStop() }, 20000)

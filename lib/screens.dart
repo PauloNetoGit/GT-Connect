@@ -123,7 +123,7 @@ class _HomeShellState extends State<HomeShell> {
         showAboutDialog(
           context: context,
           applicationName: 'Pedal Ponte',
-          applicationVersion: '1.1.0',
+          applicationVersion: '1.1.1',
           applicationIcon: const AppMark(size: 44),
           children: const [
             Text('Liga pedais MIDI (como o M-Vave Chocolate Plus) à BOSS GT-1, usando o celular como ponte.\n\n'
@@ -277,7 +277,7 @@ class _GtTile extends StatelessWidget {
     return _StatusTile(
       icon: Icons.usb_rounded,
       title: 'GT-1',
-      subtitle: state.gtBusy ? 'Conectando…' : (state.gtConnected ? 'Conectada' : 'Toque para conectar'),
+      subtitle: state.gtBusy ? 'Conectando…' : (state.gtConnected ? 'Conectada' : 'Conectar'),
       connected: state.gtConnected,
       busy: state.gtBusy,
       onTap: () {
@@ -301,7 +301,7 @@ class _PedalTile extends StatelessWidget {
     return _StatusTile(
       icon: Icons.bluetooth_rounded,
       title: 'Pedal',
-      subtitle: state.pedalConnected ? name : 'Toque para procurar',
+      subtitle: state.pedalConnected ? name : 'Procurar',
       connected: state.pedalConnected,
       busy: false,
       onTap: () {
@@ -1276,7 +1276,7 @@ class _PedalSheetState extends State<PedalSheet> {
               IconButton(tooltip: 'Procurar de novo', onPressed: scanning ? null : _refresh, icon: const Icon(Icons.refresh_rounded)),
             ]),
             const SizedBox(height: 4),
-            const Text('Ligue o Chocolate Plus e deixe-o perto do celular. Não precisa parear nas configurações do Android.',
+            const Text('Ligue o Chocolate Plus e deixe-o perto do celular. Se ele já estiver conectado ao celular, aparece aqui como "Conectado ao celular" (no Chocolate Plus, o nome costuma ser FootCtrlPlus).',
                 style: TextStyle(color: AppColors.muted, fontSize: 13, height: 1.4)),
             const SizedBox(height: 14),
             if (scanning)
@@ -1297,7 +1297,7 @@ class _PedalSheetState extends State<PedalSheet> {
               constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.5),
               child: ListView(shrinkWrap: true, children: [
                 for (final b in ble)
-                  _device('ble:${b.address}', Icons.bluetooth_rounded, b.name, b.address,
+                  _device('ble:${b.address}', Icons.bluetooth_rounded, b.name, b.detail,
                       () => _connect('ble:${b.address}', ble: b.address)),
                 for (final d in midi)
                   _device('usb:${d['id']}', Icons.usb_rounded, '${d['name']}', 'USB MIDI',
