@@ -1,0 +1,24 @@
+name: pontegt1
+description: "Ponte entre pedais MIDI (como o M-Vave Chocolate Plus) e a BOSS GT-1."
+publish_to: 'none'
+
+# versão visível + número do build. Aumente o número depois do + a cada envio para a Play Store.
+version: 1.1.0+2
+
+environment:
+  sdk: '>=3.8.0 <4.0.0'
+  flutter: '>=3.32.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  shared_preferences: ^2.3.0
+  permission_handler: ^12.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true

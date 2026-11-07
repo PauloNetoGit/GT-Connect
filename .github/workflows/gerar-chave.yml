@@ -1,0 +1,39 @@
+name: Gerar chave de assinatura (rodar uma vez só)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  chave:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Criar chave
+        run: |
+          mkdir chave
+          SENHA=$(openssl rand -base64 24 | tr -dc 'A-Za-z0-9' | head -c 24)
+          keytool -genkeypair -v -keystore chave/upload.jks -storetype JKS \
+            -alias upload -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass "$SENHA" -keypass "$SENHA" \
+            -dname "CN=Pedal Ponte, OU=Apps, O=Pedal Ponte, C=BR"
+          base64 -w0 chave/upload.jks > chave/KEYSTORE_BASE64.txt
+          echo "$SENHA" > chave/KEYSTORE_PASSWORD.txt
+          cat > chave/LEIA-ME.txt <<'EOF'
+          Guarde esta pasta num lugar seguro (fora do GitHub) e NAO compartilhe.
+
+          No GitHub: Settings > Secrets and variables > Actions > New repository secret
+            KEYSTORE_BASE64   = conteudo de KEYSTORE_BASE64.txt
+            KEYSTORE_PASSWORD = conteudo de KEYSTORE_PASSWORD.txt
+
+          Depois apague esta execucao em Actions (menu ... > Delete workflow run).
+          EOF
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chave-de-assinatura-GUARDE-BEM
+          path: chave/
+          retention-days: 1
