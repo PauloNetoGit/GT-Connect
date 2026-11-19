@@ -3,7 +3,7 @@ description: "Ponte entre pedais MIDI (como o M-Vave Chocolate Plus) e a BOSS GT
 publish_to: 'none'
 
 # versão visível + número do build. Aumente o número depois do + a cada envio para a Play Store.
-version: 1.1.2+4
+version: 1.2.0+5
 
 environment:
   sdk: '>=3.8.0 <4.0.0'
@@ -22,3 +22,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/icone.png

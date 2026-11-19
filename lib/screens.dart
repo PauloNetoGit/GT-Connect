@@ -123,7 +123,7 @@ class _HomeShellState extends State<HomeShell> {
         showAboutDialog(
           context: context,
           applicationName: 'Pedal Ponte',
-          applicationVersion: '1.1.2',
+          applicationVersion: '1.2.0',
           applicationIcon: const AppMark(size: 44),
           children: const [
             Text('Liga pedais MIDI (como o M-Vave Chocolate Plus) à BOSS GT-1, usando o celular como ponte.\n\n'
@@ -134,25 +134,16 @@ class _HomeShellState extends State<HomeShell> {
   }
 }
 
-/// Marca do app: quadrado azul com o símbolo de ponte.
+/// Marca do app: o mesmo desenho do ícone.
 class AppMark extends StatelessWidget {
   const AppMark({super.key, this.size = 32});
   final double size;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(size * 0.28),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.blueBright, AppColors.blue, AppColors.blueDeep],
-        ),
-      ),
-      child: Icon(Icons.swap_horiz_rounded, color: Colors.white, size: size * 0.66),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(size * 0.22),
+      child: Image.asset('assets/icone.png', width: size, height: size, fit: BoxFit.cover, filterQuality: FilterQuality.medium),
     );
   }
 }
